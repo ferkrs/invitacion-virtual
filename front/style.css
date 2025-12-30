@@ -1,0 +1,941 @@
+:root {
+    --color-primary: #EFC5A5;
+    --color-secondary: #CDD7E0;
+    --color-text: #808B94;
+    --color-bg: #FBFCFC;
+    --gradient-primary: linear-gradient(135deg, #EFC5A5 0%, #CDD7E0 100%);
+    --gradient-countdown: linear-gradient(135deg, #EFC5A5 0%, #CDD7E0 100%);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    color: var(--color-text);
+    background-color: var(--color-bg);
+    overflow-x: hidden;
+}
+
+/* Tipografías */
+.script-font {
+    font-family: 'Imperial Script', cursive;
+    font-weight: 400;
+    font-size: 2.5rem;
+    color: var(--color-text);
+}
+
+.script-font-large {
+    font-family: 'Imperial Script', cursive;
+    font-weight: 400;
+    font-size: 5.5rem;
+    color: var(--color-text);
+}
+
+.playwrite-font {
+    font-family: 'Playwrite US Trad', cursive;
+    color: var(--color-text);
+}
+
+.poppins-font {
+    font-family: 'Poppins', sans-serif;
+}
+
+.fw-light {
+    font-weight: 300 !important;
+}
+
+.fw-extra-light {
+    font-weight: 100 !important;
+}
+
+.event-script-title {
+    font-family: 'Imperial Script', cursive;
+    font-size: 6rem;
+    font-weight: 400 !important;
+    color: var(--color-text);
+}
+
+.event-script-subtitle {
+    font-family: 'Imperial Script', cursive;
+    font-size: 6rem;
+    font-weight: 400 !important;
+    color: var(--color-text);
+}
+
+.fecha-texto {
+    font-family: 'Poppins', sans-serif;
+    font-size: 2.25rem;
+    font-weight: 300;
+    color: var(--color-text);
+}
+
+.calendario-texto {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 200;
+    color: var(--color-text);
+}
+
+.mensaje-introductorio {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 300;
+    color: var(--color-text);
+    text-align: justify;
+}
+
+.texto-padres {
+    font-family: 'Imperial Script', cursive;
+    font-size: 3.5rem;
+    font-weight: 400;
+    color: var(--color-text);
+}
+
+/* Tamaño uniforme para textos de ceremonia, recepción y dress code */
+#lugarCeremonia,
+#horaCeremonia,
+#notaCeremonia,
+#lugarRecepcion,
+#horaRecepcion,
+#notaRecepcion,
+#direccionRecepcion,
+#dressCode {
+    font-size: 20px;
+}
+
+.rsvp-text {
+    font-size: 20px;
+}
+
+/* Estilo específico para la dirección de recepción */
+#direccionRecepcion {
+    font-size: 12px;
+    font-weight: 300;
+}
+
+.rsvp-text {
+    font-size: 20px;
+}
+
+/* Aplicar tipografías base */
+body, p, span, div, input, select, label, small {
+    font-family: 'Poppins', sans-serif;
+    color: var(--color-text);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Imperial Script', cursive;
+    color: var(--color-text);
+}
+
+h1, h2 {
+    font-weight: 600;
+}
+
+h3, h4, h5, h6 {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    color: var(--color-text);
+}
+
+/* Animaciones y Transiciones */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.8s ease-out;
+}
+
+.slide-in {
+    animation: slideIn 0.6s ease-out;
+}
+
+/* Vista de Validación */
+#validacionView {
+    background-color: var(--color-bg);
+    padding: 2rem;
+    position: relative;
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden; /* Evitar scroll por las flores */
+}
+
+/* Flores superiores */
+#validacionView::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 250px; /* Ajusta la altura según necesites */
+    background-image: url('/elementos/flores-abajo.png');
+    background-size: contain;
+    background-position: top center;
+    background-repeat: no-repeat;
+    z-index: 0;
+}
+
+/* Flores inferiores */
+#validacionView::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 200px; /* Ajusta la altura según necesites */
+    background-image: url('/elementos/flores.png');
+    background-size: contain;
+    background-position: bottom center;
+    background-repeat: no-repeat;
+    z-index: 0;
+}
+
+#validacionView > * {
+    position: relative;
+    z-index: 1;
+}
+
+/* Desktop - Escritorio */
+@media (min-width: 1200px) {
+    #validacionView {
+        background-size: cover;
+        background-position: center center;
+        background-attachment: fixed;
+    }
+}
+
+@media (min-width: 992px) and (max-width: 1199px) {
+    #validacionView {
+        background-size: cover;
+        background-position: center center;
+        background-attachment: fixed;
+    }
+}
+
+/* Tablet */
+@media (max-width: 991px) and (min-width: 769px) {
+    #validacionView {
+        background-size: cover;
+        background-position: center center;
+        background-attachment: scroll;
+        padding: 1.5rem;
+    }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    #validacionView {
+        padding: 1rem;
+        background-size: cover;
+        background-position: center center;
+        background-attachment: scroll;
+    }
+}
+
+/* Small Mobile */
+@media (max-width: 480px) {
+    #validacionView {
+        background-size: cover;
+        background-position: center center;
+        background-attachment: scroll;
+        padding: 0.5rem;
+    }
+}
+
+.card {
+    border-radius: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1) !important;
+}
+
+.sobre-clickeable {
+    transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.sobre-clickeable:hover {
+    transform: scale(1.1) rotate(-5deg);
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.2));
+    cursor: pointer;
+}
+
+.sobre-clickeable:active {
+    transform: scale(0.95);
+}
+
+.pulse-animation {
+    animation: pulse-soft 2s infinite;
+}
+
+@keyframes pulse-soft {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+/* Botones */
+.btn-primary {
+    background: var(--gradient-primary);
+    border: none;
+    border-radius: 50px;
+    padding: 12px 40px;
+    font-weight: 600;
+    color: #ffffff !important;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(239, 197, 165, 0.3);
+}
+
+.btn-primary *, .btn-primary i, .btn-primary span {
+    color: #ffffff !important;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(239, 197, 165, 0.4);
+    background: var(--gradient-primary);
+    color: #ffffff;
+}
+
+.btn-outline-secondary {
+    border-radius: 50px;
+    padding: 8px 25px;
+    transition: all 0.3s ease;
+    border-color: var(--color-text);
+    color: var(--color-text);
+}
+
+.btn-outline-secondary:hover {
+    transform: translateY(-2px);
+    background-color: var(--color-text);
+    border-color: var(--color-text);
+    color: #ffffff;
+}
+
+/* Countdown Section */
+.countdown-section {
+    background: var(--gradient-countdown);
+    margin: 0 -15px;
+    border-radius: 0;
+    padding: 2rem 1rem;
+}
+
+@media (max-width: 768px) {
+    .countdown-section {
+        margin: 0 -1rem;
+        padding: 1.5rem 0.5rem;
+    }
+}
+
+.countdown-section p {
+    color: #ffffff;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 400;
+}
+
+.countdown-display {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.countdown-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: fadeIn 0.8s ease-out;
+}
+
+.countdown-number {
+    font-size: 3rem;
+    font-weight: 700;
+    font-family: 'Poppins', sans-serif;
+    line-height: 1;
+    margin-bottom: 5px;
+    color: #ffffff;
+}
+
+.countdown-label {
+    font-size: 0.9rem;
+    font-weight: 300;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #ffffff;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Image Placeholders */
+.image-placeholder {
+    width: 100%;
+    min-height: 480px;
+    height: auto;
+    padding: 0;
+    background-color: transparent;
+    border-radius: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    position: relative;
+    margin: 2rem auto;
+    box-shadow: none;
+}
+
+.image-placeholder img {
+    width: 100%;
+    height: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    object-position: center;
+    border-radius: 0;
+    position: relative;
+    z-index: 1;
+}
+
+.placeholder-content {
+    opacity: 0.4;
+    color: var(--color-text);
+    position: absolute;
+    z-index: 1;
+}
+
+.placeholder-content i {
+    color: #808B94;
+    font-size: 3rem;
+}
+
+/* Cuando hay imagen, ocultar el placeholder content */
+.image-placeholder:has(img) .placeholder-content {
+    display: none;
+}
+
+/* Icon Sections */
+.icon-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: pulse 2s infinite;
+}
+
+.icon-section img {
+    width: 8rem;
+    height: 8rem;
+    object-fit: contain;
+}
+
+/* Modal */
+.modal-content {
+    border-radius: 20px;
+    max-width: 100%;
+}
+
+@media (max-width: 768px) {
+    .modal-content {
+        border-radius: 15px;
+        margin: 0.5rem;
+    }
+    
+    .modal-body {
+        padding: 1.25rem;
+    }
+    
+    .modal-header {
+        padding: 1rem 1.25rem;
+    }
+}
+
+.modal-header {
+    background: transparent;
+    color: var(--color-text);
+    border-radius: 20px 20px 0 0;
+    padding: 1.25rem 1.25rem 0.5rem 1.25rem;
+    justify-content: flex-end;
+}
+
+.modal-header .btn-close {
+    filter: none;
+    opacity: 0.6;
+}
+
+.modal-header .btn-close:focus {
+    box-shadow: none;
+}
+
+.modal-title-script {
+    color: var(--color-text);
+    font-size: 3.2rem;
+}
+
+.modal-subtext {
+    font-size: 1.05rem;
+    font-weight: 300;
+    color: var(--color-text);
+}
+
+.modal-label {
+    font-size: 1rem;
+    font-weight: 300;
+    color: var(--color-text);
+}
+
+.modal-value {
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--color-text);
+}
+
+.modal-pill {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--color-text);
+}
+
+.modal-select {
+    font-size: 1rem;
+}
+
+.modal-cta {
+    min-width: 140px;
+    padding: 10px 36px;
+    border-radius: 14px;
+    font-weight: 500;
+}
+
+.form-select {
+    border-radius: 10px;
+    border: 1px solid #e0e0e0;
+    padding: 12px;
+    transition: all 0.3s ease;
+}
+
+.form-select:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 0.2rem rgba(239, 197, 165, 0.25);
+}
+
+.form-control {
+    border-radius: 10px;
+    border: 1px solid #e0e0e0;
+    padding: 12px;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 0.2rem rgba(239, 197, 165, 0.25);
+}
+
+/* Scroll suave */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Responsive - Tablet */
+@media (max-width: 992px) and (min-width: 769px) {
+    .script-font-large {
+        font-size: 4.5rem;
+    }
+    
+    .script-font {
+        font-size: 2.2rem;
+    }
+    
+    .countdown-number {
+        font-size: 2.5rem;
+    }
+    
+    .countdown-display {
+        gap: 20px;
+    }
+    
+    .image-placeholder {
+        min-height: 380px;
+        padding: 0;
+    }
+    
+    .playwrite-font {
+        font-size: 1.8rem !important;
+    }
+
+    .event-script-title {
+        font-size: 5rem;
+    }
+
+    .event-script-subtitle {
+        font-size: 5rem;
+    }
+    
+    .fecha-texto {
+        font-size: 1.8rem;
+    }
+}
+
+/* Responsive - Mobile */
+@media (max-width: 768px) {
+    #invitacionView {
+        padding: 0.5rem 0;
+    }
+    
+    .row {
+        margin-left: -0.5rem;
+        margin-right: -0.5rem;
+    }
+    
+    .row > * {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+    
+    .col-md-6 {
+        margin-bottom: 1rem;
+    }
+    .script-font-large {
+        font-size: 3.5rem;
+        line-height: 1.2;
+    }
+    
+    .script-font {
+        font-size: 1.8rem;
+    }
+    
+    .countdown-number {
+        font-size: 1.8rem;
+    }
+    
+    .countdown-label {
+        font-size: 0.75rem;
+    }
+    
+    .countdown-display {
+        gap: 10px;
+    }
+    
+    .countdown-item {
+        min-width: 60px;
+    }
+    
+    .image-placeholder {
+        min-height: 260px;
+        margin: 1.5rem auto;
+        border-radius: 0;
+        padding: 0;
+    }
+    
+    .placeholder-content i {
+        font-size: 2rem;
+    }
+    
+    .playwrite-font {
+        font-size: 1.5rem !important;
+    }
+    
+    .icon-section i,
+    .icon-section img {
+        font-size: 6rem !important;
+        width: 6rem !important;
+        height: 6rem !important;
+    }
+    
+    .btn-primary {
+        padding: 10px 30px;
+        font-size: 0.9rem;
+    }
+    
+    .btn-outline-secondary {
+        padding: 6px 18px;
+        font-size: 0.85rem;
+    }
+    
+    h1, h2 {
+        font-size: 1.8rem;
+    }
+
+    .event-script-title {
+        font-size: 5rem;
+    }
+
+    .event-script-subtitle {
+        font-size: 5rem;
+    }
+    
+    .fecha-texto {
+        font-size: 1.5rem;
+    }
+    
+    .calendario-texto {
+        font-size: 1rem;
+    }
+    
+    .mensaje-introductorio {
+        font-size: 1rem;
+    }
+    
+    .texto-padres {
+        font-size: 3rem;
+    }
+    
+    p {
+        font-size: 0.95rem;
+    }
+    
+    .card {
+        margin: 1rem;
+    }
+    
+    #validacionView .card {
+        margin: 1rem;
+        max-width: calc(100% - 2rem);
+    }
+    
+    .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    
+    .text-center img[src*="flores"] {
+        max-height: 80px !important;
+    }
+    
+    .text-center img[src*="flores"]:first-child {
+        max-height: 100px !important;
+    }
+    
+    .text-center.py-5 {
+        padding-top: 2rem !important;
+        padding-bottom: 2rem !important;
+    }
+    
+    .header-flores {
+        max-height: 100px !important;
+    }
+    
+    .playwrite-font {
+        font-size: 1.8rem !important;
+    }
+}
+
+/* Responsive - Small Mobile */
+@media (max-width: 480px) {
+    .script-font-large {
+        font-size: 3rem;
+    }
+    
+    .script-font {
+        font-size: 1.5rem;
+    }
+    
+    .countdown-number {
+        font-size: 1.5rem;
+    }
+    
+    .countdown-display {
+        gap: 8px;
+    }
+    
+    .countdown-item {
+        min-width: 50px;
+    }
+    
+    .image-placeholder {
+        min-height: 220px;
+        margin: 1rem auto;
+        padding: 0;
+    }
+    
+    .playwrite-font {
+        font-size: 1.2rem !important;
+    }
+    
+    .header-flores {
+        max-height: 70px !important;
+    }
+    
+    h2.playwrite-font {
+        font-size: 1.5rem !important;
+    }
+    
+    .icon-section i,
+    .icon-section img {
+        font-size: 4.5rem !important;
+        width: 4.5rem !important;
+        height: 4.5rem !important;
+    }
+    
+    .btn-primary {
+        padding: 8px 25px;
+        font-size: 0.85rem;
+    }
+    
+    h1, h2 {
+        font-size: 1.5rem;
+    }
+
+    .event-script-title {
+        font-size: 2.85rem;
+    }
+
+    .event-script-subtitle {
+        font-size: 2.85rem;
+    }
+    
+    .fecha-texto {
+        font-size: 1.25rem;
+    }
+    
+    .calendario-texto {
+        font-size: 0.9rem;
+    }
+    
+    .mensaje-introductorio {
+        font-size: 0.9rem;
+    }
+    
+    .texto-padres {
+        font-size: 2.8rem;
+    }
+    
+    .modal-dialog {
+        margin: 1rem;
+    }
+    
+    #validacionView .card-body {
+        padding: 1.5rem !important;
+    }
+    
+    .sobre-clickeable {
+        max-width: 150px !important;
+    }
+}
+
+/* Efectos de entrada */
+.container, .card {
+    animation: fadeIn 0.8s ease-out;
+}
+
+/* Transiciones generales */
+a, button, input, select {
+    transition: all 0.3s ease;
+}
+
+/* Efecto de hover en textos */
+.text-muted {
+    color: var(--color-text) !important;
+    transition: color 0.3s ease;
+}
+
+/* Loading state */
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* SweetAlert2 personalización */
+.swal2-popup {
+    border-radius: 20px !important;
+    font-family: 'Poppins', sans-serif !important;
+}
+
+.swal2-title {
+    font-family: 'Poppins', sans-serif !important;
+    color: var(--color-text) !important;
+    font-weight: 600 !important;
+}
+
+.swal2-confirm {
+    background: var(--gradient-primary) !important;
+    border-radius: 50px !important;
+    padding: 12px 40px !important;
+}
+
+/* Estado inicial del input de código */
+#codigoInput {
+    display: none;
+}
+
+/* Transición para la vista de invitación */
+#invitacionView {
+    opacity: 1;
+    transition: opacity 0.5s ease-in;
+    position: relative;
+    min-height: 100vh;
+    padding-top: 200px;
+    padding-bottom: 200px;
+}
+
+/* Flores superiores en invitación */
+#invitacionView::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 250px;
+    background-image: url('/elementos/flores-abajo.png');
+    background-size: contain;
+    background-position: top center;
+    background-repeat: no-repeat;
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* Flores inferiores en invitación */
+#invitacionView::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 200px;
+    background-image: url('/elementos/flores.png');
+    background-size: contain;
+    background-position: bottom center;
+    background-repeat: no-repeat;
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* Asegurar que el contenido esté sobre las flores */
+#invitacionView > * {
+    position: relative;
+    z-index: 1;
+}
+

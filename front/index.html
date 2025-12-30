@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invitación Digital - Fernando y Melissa</title>
+    
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Imperial+Script&family=Poppins:wght@300;400;500;600;700&family=Playwrite+US+Trad:wght@100..400&display=swap" rel="stylesheet">
+    
+    <!-- SweetAlert2 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/front/style.css">
+</head>
+<body>
+    <!-- Vista Inicial - Validación de Código -->
+    <div id="validacionView" class="container-fluid min-vh-100 d-flex align-items-center justify-content-center">
+        <div class="card shadow-lg border-0" style="max-width: 500px; width: 100%;">
+            <div class="card-body text-center p-5"> 
+                <h1 class="script-font mb-4">Fernando y Melissa</h1>
+                
+                <div id="nombreInvitado" class="mb-4 d-none">
+                    <p class="mb-2" id="nombreInvitadoTexto"></p>
+                    <p class="fw-bold" id="cantidadInvitadoTexto">-No Personas-</p>
+                </div>
+                
+                <p class="small mb-4" id="textoSobre">Para abrir la invitación haz click en el sobre:</p>
+                
+                <div class="mb-4">
+                    <img src="/elementos/sobre.png" alt="Sobre" id="sobreImg" class="img-fluid sobre-clickeable" style="max-width: 200px; cursor: pointer; transition: transform 0.3s ease;">
+                </div>
+                
+                <div id="codigoInput" class="mt-4" style="display: none;">
+                    <input type="text" id="codigoInvitado" class="form-control form-control-lg text-center" placeholder="Ingresa tu código único">
+                    <button id="btnValidar" class="btn btn-primary mt-3 px-5">Validar Código</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Vista de Invitación Completa -->
+    <div id="invitacionView" class="container-fluid d-none">
+        <!-- Header -->
+        <div class="text-center py-5 px-3">
+
+            <h1 class="script-font-large mb-2 px-2" id="nombresNoviosHeader">Fernando Orozco y Melissa López</h1>
+            <p class="px-2 fecha-texto">Nos casamos el día:</p>
+            <h2 class="script-font event-script-title mb-2 px-2" id="diaSemana">Sábado</h2>
+            <p class="mb-4 px-2 fecha-texto" id="fechaEvento">17 Enero 2026</p>
+            <div class="mb-4">
+                <button class="btn btn-primary btn-lg px-5" onclick="agregarAlCalendario()">
+                    <i class="bi bi-calendar-event me-2"></i> Agrega a mi calendario la fecha
+                </button>
+            </div>
+        </div>
+
+        <!-- Countdown -->
+        <div class="countdown-section text-center text-white py-4 mb-5">
+            <p class="mb-2">Solo Faltan</p>
+            <div id="countdown" class="countdown-display">
+                <div class="countdown-item">
+                    <span class="countdown-number" id="dias">00</span>
+                    <span class="countdown-label">Día</span>
+                </div>
+                <div class="countdown-item">
+                    <span class="countdown-number" id="horas">00</span>
+                    <span class="countdown-label">Hrs</span>
+                </div>
+                <div class="countdown-item">
+                    <span class="countdown-number" id="minutos">00</span>
+                    <span class="countdown-label">Min</span>
+                </div>
+                <div class="countdown-item">
+                    <span class="countdown-number" id="segundos">00</span>
+                    <span class="countdown-label">Seg</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mensaje Introductorio -->
+        <div class="container mb-5">
+            <p class="text-justify mb-4 px-3 mensaje-introductorio">
+                Las mejores cosas de la vida son aún más fantásticas cuando son compartidas con personas tan maravillosas como tú, por ello queremos que seas parte de la celebración.
+            </p>
+            
+            <!-- Placeholder Imagen 1 -->
+            <div class="image-placeholder mb-4">
+                <img src="/elementos/1.png" alt="Pareja - foto 1">
+                <div class="placeholder-content">
+                    <i class="bi bi-image text-muted" style="font-size: 3rem;"></i>
+                </div>
+            </div>
+            
+
+        </div>
+
+        <!-- Padres -->
+        <div class="container mb-5 text-center">
+            <p class="mb-3 texto-padres">Con la bendicion de Dios y nuestros padres:</p>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <p class="mb-1" id="padreNovio">Willian Orozco Castañon</p>
+                    <p id="madreNovio">Doricelma Gonzalez Fuentes</p>
+                </div>
+                <div class="col-md-6">
+                    <div class="script-font mb-3" style="font-size: 2rem;">Y</div>
+                    <p class="mb-1" id="padreNovia">Audencio López Bonilla</p>
+                    <p id="madreNovia">Delma López Gaspar</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Placeholder Imagen 2 -->
+        <div class="container mb-5">
+            <div class="image-placeholder mb-4">
+                <img src="/elementos/2.png" alt="Pareja - foto 2">
+                <div class="placeholder-content">
+                    <i class="bi bi-image text-muted" style="font-size: 3rem;"></i>
+                </div>
+            </div>
+          
+        </div>
+
+        <!-- Ceremonia -->
+        <div class="container mb-5 text-center">
+            <div class="icon-section mb-3">
+                <img src="/elementos/ceremonia.svg" alt="Ceremonia">
+            </div>
+            <h3 class="script-font event-script-subtitle mb-3">Ceremonia</h3>
+            <p class="mb-2" id="lugarCeremonia">Jardín - Joya Escondida</p>
+            <p class="fw-bold mb-2" id="horaCeremonia">-3:00 pm-</p>
+            <small id="notaCeremonia"></small>
+        </div>
+
+        <!-- Recepción -->
+        <div class="container mb-5 text-center">
+            <div class="icon-section mb-3">
+                <img src="/elementos/recepcion.svg" alt="Recepción">
+            </div>
+            <h3 class="script-font event-script-subtitle mb-3">Recepción</h3>
+            <p class="mb-2" id="lugarRecepcion">Salón de Eventos Joya Escondida</p>
+            <p class="fw-bold mb-2" id="horaRecepcion">-6:00 pm-</p>
+            <small class="mb-3 d-block" id="notaRecepcion"></small>
+            <p class="small mb-3" id="direccionRecepcion">3ra Calle 6, Avenida 3, 01036 zona 3, Villa nueva, Guatemala, Guatemala C.A.</p>
+            <div class="d-flex justify-content-center gap-2 flex-wrap">
+                <button class="btn btn-primary btn-lg px-5" onclick="abrirGoogleMaps()">
+                    <i class="bi bi-geo-alt-fill me-2"></i> Google Maps
+                </button>
+                <button class="btn btn-primary btn-lg px-5" onclick="abrirWaze()">
+                    <i class="bi bi-cursor-fill me-2"></i> Waze
+                </button>
+            </div>
+        </div>
+
+        <!-- Código de Vestimenta -->
+        <div class="container mb-5 text-center">
+            <div class="icon-section mb-3">
+                <img src="/elementos/drescode.svg" alt="Código de Vestimenta">
+            </div>
+            <h3 class="script-font event-script-subtitle mb-3">Código de Vestimenta</h3>
+            <p id="dressCode">Formal</p>
+        </div>
+
+        <!-- Placeholder Imagen 3 -->
+        <div class="container mb-5">
+            <div class="image-placeholder mb-4">
+                <img src="/elementos/3.png" alt="Pareja - foto 3">
+                <div class="placeholder-content">
+                    <i class="bi bi-image text-muted" style="font-size: 3rem;"></i>
+                </div>
+            </div>
+        
+        </div>
+
+        <!-- RSVP -->
+        <div class="container mb-5 text-center">
+            <div class="icon-section mb-3">
+                <i class="bi bi-envelope-check" style="font-size: 2.5rem; color: #808B94;"></i>
+            </div>
+            <p class="rsvp-text mb-4 px-3">
+                Nos encantaría contar con tu presencia. Por favor, confirma tu asistencia antes del <span id="fechaLimiteRSVP">10 de enero</span> haciendo clic en el siguiente botón:
+            </p>
+            <button class="btn btn-primary btn-lg px-5" data-bs-toggle="modal" data-bs-target="#rsvpModal">
+                <i class="bi bi-check-circle-fill me-2"></i> Confirma asistencia
+            </button>
+        </div>
+        
+        <div class="container mb-5 text-center">
+            <p class="mb-4 px-3 poppins-font fw-light" style="font-size: 1.2rem;">
+                Esta celebración es un reflejo de todas las personas maravillosas que nos rodean.
+            </p>
+            <p class="mb-4 px-3 playwrite-font fw-light" style="font-size: 1.4rem;">
+                Gracias por ser parte del inicio de nuestra historia
+            </p>
+        </div>
+
+
+    </div>
+
+    <!-- Modal RSVP -->
+    <div class="modal fade" id="rsvpModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header border-0 justify-content-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <h3 class="script-font-large modal-title-script mb-4">Fernando y Melissa</h3>
+                    <p class="modal-subtext mb-3">
+                        Al confirmar, respetar el número máximo de invitados asignados de:
+                    </p>
+                    <p class="text-center fw-bold mb-4 modal-pill" id="maxPersonasModal">-2 Adultos-</p>
+                    
+                    <div class="mb-3">
+                        <p class="modal-label mb-1">Nombre de los invitados:</p>
+                        <p class="modal-value" id="nombresInvitadosModal">Ronald Fuentes y Deisy Miranda</p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <p class="modal-label mb-1">Cantidad de invitados:</p>
+                        <p class="modal-value" id="cantidadInvitadosModal">2</p>
+                    </div>
+                    
+                    <div id="rsvpButtons" class="d-grid gap-3">
+                        <button type="button" class="btn btn-primary btn-lg px-5" id="btnAsistir">
+                            <i class="bi bi-check-circle-fill me-2"></i> <span id="textoAsistir">Sí, asistiremos</span>
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary btn-lg px-5" id="btnNoAsistir">
+                            <i class="bi bi-x-circle-fill me-2"></i> No podremos asistir
+                        </button>
+                    </div>
+                    
+                    <div id="rsvpEstado" class="mt-4 d-none">
+                        <p class="modal-label mb-2">Estado de tu confirmación:</p>
+                        <p class="fw-bold text-primary" id="rsvpEstadoTexto"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- Config API -->
+    <script src="/front/config.js"></script>
+    <!-- Custom JS -->
+    <script src="/front/app.js"></script>
+</body>
+</html>
+
