@@ -259,6 +259,18 @@
     <script src="/front/config.js"></script>
     <!-- Custom JS -->
     <script src="/front/app.js"></script>
+
+    <!-- Elementos de Música -->
+    <audio id="musicaInvitacion" loop preload="auto">
+        <source src="/elementos/musica.mp3" type="audio/mpeg">
+        Tu navegador no soporta el elemento de audio.
+    </audio>
+
+    <div id="musicControl" class="music-control d-none">
+        <button id="btnMusica" class="btn-music-float">
+            <i class="bi bi-volume-up-fill" id="musicIcon"></i>
+        </button>
+    </div>
 </body>
 </html>
 

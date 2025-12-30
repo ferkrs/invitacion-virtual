@@ -7,17 +7,18 @@
     --gradient-countdown: linear-gradient(135deg, #EFC5A5 0%, #CDD7E0 100%);
 }
 
-* {
+html, body {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    width: 100%;
+    overflow-x: hidden;
 }
 
 body {
     font-family: 'Poppins', sans-serif;
     color: var(--color-text);
     background-color: var(--color-bg);
-    overflow-x: hidden;
 }
 
 /* Tipografías */
@@ -352,15 +353,23 @@ h3, h4, h5, h6 {
 /* Countdown Section */
 .countdown-section {
     background: var(--gradient-countdown);
-    margin: 0 -15px;
+    margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%);
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    transform: translateX(-50%);
     border-radius: 0;
     padding: 2rem 1rem;
 }
 
 @media (max-width: 768px) {
     .countdown-section {
-        margin: 0 -1rem;
         padding: 1.5rem 0.5rem;
+        width: 100vw;
+        margin-left: calc(-50vw + 50%);
+        margin-right: calc(-50vw + 50%);
     }
 }
 
@@ -405,11 +414,11 @@ h3, h4, h5, h6 {
 /* Image Placeholders */
 .image-placeholder {
     width: 100%;
-    min-height: 480px;
+    max-width: 100%;
     height: auto;
     padding: 0;
     background-color: transparent;
-    border-radius: 0;
+    border-radius: 15px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -422,13 +431,10 @@ h3, h4, h5, h6 {
 
 .image-placeholder img {
     width: 100%;
-    height: 100%;
-    max-height: 100%;
-    object-fit: contain;
-    object-position: center;
-    border-radius: 0;
-    position: relative;
-    z-index: 1;
+    height: auto;
+    object-fit: cover;
+    border-radius: 15px;
+    display: block;
 }
 
 .placeholder-content {
@@ -612,12 +618,12 @@ html {
 /* Responsive - Mobile */
 @media (max-width: 768px) {
     #invitacionView {
-        padding: 0.5rem 0;
+        /* Eliminado padding conflictivo aquí, se maneja al final del archivo */
     }
     
     .row {
-        margin-left: -0.5rem;
-        margin-right: -0.5rem;
+        margin-left: 0;
+        margin-right: 0;
     }
     
     .row > * {
@@ -654,10 +660,12 @@ html {
     }
     
     .image-placeholder {
-        min-height: 260px;
         margin: 1.5rem auto;
-        border-radius: 0;
-        padding: 0;
+        border-radius: 10px;
+    }
+    
+    .image-placeholder img {
+        border-radius: 10px;
     }
     
     .placeholder-content i {
@@ -897,8 +905,18 @@ a, button, input, select {
     transition: opacity 0.5s ease-in;
     position: relative;
     min-height: 100vh;
-    padding-top: 200px;
-    padding-bottom: 200px;
+    padding-top: 150px;
+    padding-bottom: 150px;
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+}
+
+@media (max-width: 768px) {
+    #invitacionView {
+        padding-top: 100px;
+        padding-bottom: 100px;
+    }
 }
 
 /* Flores superiores en invitación */
@@ -917,6 +935,12 @@ a, button, input, select {
     pointer-events: none;
 }
 
+@media (max-width: 768px) {
+    #invitacionView::before {
+        height: 150px;
+    }
+}
+
 /* Flores inferiores en invitación */
 #invitacionView::after {
     content: '';
@@ -933,9 +957,74 @@ a, button, input, select {
     pointer-events: none;
 }
 
+@media (max-width: 768px) {
+    #invitacionView::after {
+        height: 120px;
+    }
+}
+
 /* Asegurar que el contenido esté sobre las flores */
 #invitacionView > * {
     position: relative;
     z-index: 1;
+}
+
+/* Control de Música Flotante */
+.music-control {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 1000;
+}
+
+.btn-music-float {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--gradient-primary);
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(239, 197, 165, 0.4);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    animation: pulse-music 2s infinite;
+}
+
+.btn-music-float:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(239, 197, 165, 0.6);
+}
+
+.btn-music-float i {
+    color: white !important;
+}
+
+@keyframes pulse-music {
+    0% {
+        box-shadow: 0 0 0 0 rgba(239, 197, 165, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 15px rgba(239, 197, 165, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(239, 197, 165, 0);
+    }
+}
+
+@media (max-width: 768px) {
+    .music-control {
+        bottom: 20px;
+        right: 20px;
+    }
+    
+    .btn-music-float {
+        width: 50px;
+        height: 50px;
+        font-size: 1.2rem;
+    }
 }
 

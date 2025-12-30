@@ -3,6 +3,8 @@ let datosEvento = null;
 let invitadoActual = null;
 let countdownInterval = null;
 let uuidInvitado = null;
+let musica = null;
+let musicPlaying = false;
 
 // Fecha objetivo para el countdown (17 Enero 2026)
 const fechaEvento = new Date('2026-01-17T15:00:00');
@@ -53,6 +55,22 @@ function inicializarEventListeners() {
     if (sobreImg) {
         sobreImg.addEventListener('click', function() {
             if (invitadoActual) {
+                // Iniciar la música inmediatamente al hacer click para asegurar que el navegador lo permita
+                if (musica) {
+                    musica.volume = 0.3;
+                    musica.play().then(() => {
+                        musicPlaying = true;
+                        document.getElementById('musicControl').classList.remove('d-none');
+                        document.getElementById('musicControl').classList.add('fade-in');
+                        const musicIcon = document.getElementById('musicIcon');
+                        if (musicIcon) {
+                            musicIcon.classList.replace('bi-volume-mute-fill', 'bi-volume-up-fill');
+                        }
+                    }).catch(error => {
+                        console.error("Error al reproducir música en el click:", error);
+                    });
+                }
+
                 // Si ya está validado, abrir invitación
                 sobreImg.classList.add('fade-out');
                 mostrarInvitacion();
@@ -88,6 +106,89 @@ function inicializarEventListeners() {
     const btnNoAsistir = document.getElementById('btnNoAsistir');
     if (btnNoAsistir) {
         btnNoAsistir.addEventListener('click', () => enviarRSVP('no'));
+    }
+
+    // Control de música
+    musica = document.getElementById('musicaInvitacion');
+    
+    if (musica) {
+        musica.addEventListener('error', function(e) {
+            console.error("Error cargando el archivo de audio:", musica.error);
+        });
+    }
+
+    const btnMusica = document.getElementById('btnMusica');
+    if (btnMusica && musica) {
+        btnMusica.addEventListener('click', toggleMusica);
+    }
+
+    // Failsafe: Intentar reproducir en cualquier primer click si ya se validó
+    document.addEventListener('click', function() {
+        if (!musicPlaying && invitadoActual) {
+            iniciarMusica();
+        }
+    }, { once: true });
+}
+
+// Alternar reproducción/silencio de música
+function toggleMusica() {
+    if (!musica) return;
+
+    const musicIcon = document.getElementById('musicIcon');
+    
+    if (musica.paused) {
+        musica.play().catch(e => console.error("Error al reproducir:", e));
+        musicIcon.classList.replace('bi-volume-mute-fill', 'bi-volume-up-fill');
+        musicPlaying = true;
+    } else {
+        musica.pause();
+        musicIcon.classList.replace('bi-volume-up-fill', 'bi-volume-mute-fill');
+        musicPlaying = false;
+    }
+}
+
+// Iniciar música con volumen al 30%
+function iniciarMusica() {
+    if (!musica) {
+        musica = document.getElementById('musicaInvitacion');
+    }
+    
+    if (!musica) return;
+    
+    musica.volume = 0.3;
+    
+    // Forzar la carga del audio si no ha comenzado
+    if (musica.readyState < 2) {
+        musica.load();
+    }
+
+    const playPromise = musica.play();
+    
+    if (playPromise !== undefined) {
+        playPromise.then(() => {
+            console.log("Música iniciada correctamente");
+            musicPlaying = true;
+            const musicControl = document.getElementById('musicControl');
+            if (musicControl) {
+                musicControl.classList.remove('d-none');
+                musicControl.classList.add('fade-in');
+            }
+            const musicIcon = document.getElementById('musicIcon');
+            if (musicIcon) {
+                musicIcon.classList.replace('bi-volume-mute-fill', 'bi-volume-up-fill');
+            }
+        }).catch(error => {
+            console.warn("La reproducción automática fue bloqueada o falló:", error);
+            // Mostrar el control de música de todos modos para que el usuario pueda activarla
+            const musicControl = document.getElementById('musicControl');
+            if (musicControl) {
+                musicControl.classList.remove('d-none');
+            }
+            const musicIcon = document.getElementById('musicIcon');
+            if (musicIcon) {
+                musicIcon.classList.replace('bi-volume-up-fill', 'bi-volume-mute-fill');
+            }
+        });
     }
 }
 
@@ -210,6 +311,9 @@ function mostrarNombreInvitado() {
 // Mostrar invitación completa
 function mostrarInvitacion() {
     if (!invitadoActual || !datosEvento) return;
+
+    // Intentar iniciar la música inmediatamente para aprovechar la interacción del usuario (click)
+    iniciarMusica();
 
     // Ocultar vista de validación
     const validacionView = document.getElementById('validacionView');
