@@ -1,19 +1,19 @@
 {
-    "nombres_novios": "Fernando Orozco y Melissa López",
-    "fecha": "17 Enero 2026",
+    "nombres_novios": "Fernando Orozco Y Melissa López",
+    "fecha": "17 enero 2026",
     "dia_semana": "Sábado",
     "fecha_limite_rsvp": "10 de enero",
     "dress_code": "Formal",
     "ceremonia": {
         "lugar": "Jardín - Joya Escondida",
-        "hora": "3:00 pm",
+        "hora": "3:00 p.m.",
         "nota": ""
     },
     "recepcion": {
         "lugar": "Salón de Eventos Joya Escondida",
-        "hora": "6:00 pm",
+        "hora": "6:00 p.m.",
         "nota": "",
-        "direccion": "3ra. Calle A, Acceso 2, 3-98 zona 3, San Pedro Sacatepéquez, San Marcos, Guatemala",
+        "direccion": "3.ª Calle A, Acceso 2, 3-98, zona 3, San Pedro Sacatepéquez, San Marcos, Guatemala.",
         "google_maps_url": "https://maps.app.goo.gl/CkwSGK7kPwGj8L9P9",
         "waze_url": "https://waze.com/ul/h9fwtpq325"
     },
