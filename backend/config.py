@@ -25,6 +25,9 @@ class Settings(BaseSettings):
     ADMIN_PASSWORD: str
     ADMIN_SECRET_CODE: str
     
+    # Base URL para meta tags (opcional, se usa request.base_url si no está configurado)
+    BASE_URL: Optional[str] = None
+    
     class Config:
         env_file = ".env"
 

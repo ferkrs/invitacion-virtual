@@ -66,7 +66,21 @@ app.add_middleware(
 async def serve_index(request: Request):
     """Sirve la página principal de la invitación"""
     # Obtener la URL base para los meta tags
-    base_url = str(request.base_url).rstrip('/')
+    # Priorizar BASE_URL de configuración, luego usar request.base_url
+    if settings.BASE_URL:
+        base_url = settings.BASE_URL.rstrip('/')
+    else:
+        # Construir URL base desde los headers de la petición
+        scheme = request.url.scheme
+        # Verificar si hay un proxy que indique HTTPS
+        if request.headers.get("x-forwarded-proto") == "https":
+            scheme = "https"
+        elif request.headers.get("x-forwarded-ssl") == "on":
+            scheme = "https"
+        
+        host = request.headers.get("host") or request.url.netloc
+        base_url = f"{scheme}://{host}"
+    
     return templates.TemplateResponse("index.html", {
         "request": request,
         "base_url": base_url
