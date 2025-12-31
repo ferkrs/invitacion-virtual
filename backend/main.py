@@ -175,12 +175,10 @@ async def confirmar_rsvp(
         else:
             invitado.cantidad_ninos = invitado.max_ninos
         
-        # Calcular cantidad_personas automáticamente
-        invitado.cantidad_personas = invitado.cantidad_adultos + invitado.cantidad_ninos
+        # cantidad_personas se calcula automáticamente como propiedad
     else:
         invitado.estado = EstadoInvitado.RECHAZADO
         invitado.confirmacion = "No podremos asistir"
-        invitado.cantidad_personas = 0
         invitado.cantidad_adultos = 0
         invitado.cantidad_ninos = 0
     
@@ -228,17 +226,14 @@ async def crear_invitado(
             raise HTTPException(status_code=400, detail="El código ya existe")
         codigo = invitado.codigo
     
-    # Calcular max_personas automáticamente desde adultos y niños
+    # Obtener adultos y niños
     max_adultos = invitado.max_adultos
     max_ninos = invitado.max_ninos or 0
-    max_personas = max_adultos + max_ninos
     
     nuevo_invitado = Invitado(
         uuid=str(uuid.uuid4()),
         codigo=codigo,
         nombres=invitado.nombres,
-        max_personas=max_personas,  # Calculado automáticamente
-        cantidad_personas=max_personas,  # Calculado automáticamente
         max_adultos=max_adultos,
         max_ninos=max_ninos,
         cantidad_adultos=max_adultos,
@@ -279,13 +274,10 @@ async def actualizar_invitado(
         if db_invitado.estado == EstadoInvitado.PENDIENTE:
             db_invitado.cantidad_ninos = invitado.max_ninos
     
-    # Recalcular max_personas y cantidad_personas automáticamente
-    if invitado.max_adultos is not None or invitado.max_ninos is not None:
-        db_invitado.max_personas = db_invitado.max_adultos + db_invitado.max_ninos
-        if db_invitado.estado == EstadoInvitado.PENDIENTE:
-            db_invitado.cantidad_personas = db_invitado.max_personas
-            db_invitado.cantidad_adultos = db_invitado.max_adultos
-            db_invitado.cantidad_ninos = db_invitado.max_ninos
+    # Si se actualizan adultos y niños, actualizar cantidades si está pendiente
+    if (invitado.max_adultos is not None or invitado.max_ninos is not None) and db_invitado.estado == EstadoInvitado.PENDIENTE:
+        db_invitado.cantidad_adultos = db_invitado.max_adultos
+        db_invitado.cantidad_ninos = db_invitado.max_ninos
     if invitado.max_adultos is not None:
         db_invitado.max_adultos = invitado.max_adultos
         if db_invitado.estado == EstadoInvitado.PENDIENTE:
@@ -307,21 +299,18 @@ async def actualizar_invitado(
                 db_invitado.fecha_confirmacion = None
                 db_invitado.cantidad_adultos = db_invitado.max_adultos
                 db_invitado.cantidad_ninos = db_invitado.max_ninos
-                db_invitado.cantidad_personas = db_invitado.cantidad_adultos + db_invitado.cantidad_ninos
             # Si se cambia a confirmado, establecer valores por defecto
             elif nuevo_estado == EstadoInvitado.CONFIRMADO:
                 if not db_invitado.confirmacion:
                     db_invitado.confirmacion = "Si, asistiremos."
                 db_invitado.cantidad_adultos = db_invitado.max_adultos
                 db_invitado.cantidad_ninos = db_invitado.max_ninos
-                db_invitado.cantidad_personas = db_invitado.cantidad_adultos + db_invitado.cantidad_ninos
                 if not db_invitado.fecha_confirmacion:
                     db_invitado.fecha_confirmacion = datetime.utcnow()
             # Si se cambia a rechazado
             elif nuevo_estado == EstadoInvitado.RECHAZADO:
                 if not db_invitado.confirmacion:
                     db_invitado.confirmacion = "No podremos asistir"
-                db_invitado.cantidad_personas = 0
                 db_invitado.cantidad_adultos = 0
                 db_invitado.cantidad_ninos = 0
         except ValueError:

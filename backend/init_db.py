@@ -40,21 +40,18 @@ try:
             {
                 "codigo": "FM2026-001",
                 "nombres": "Ronald Fuentes y Deisy Miranda",
-                "max_personas": 2,
                 "max_adultos": 2,
                 "max_ninos": 0
             },
             {
                 "codigo": "FM2026-002",
                 "nombres": "Juan Pérez y María García",
-                "max_personas": 3,
                 "max_adultos": 2,
                 "max_ninos": 1
             },
             {
                 "codigo": "FM2026-003",
                 "nombres": "Carlos Rodríguez",
-                "max_personas": 1,
                 "max_adultos": 1,
                 "max_ninos": 0
             }
@@ -65,8 +62,6 @@ try:
                 uuid=str(uuid.uuid4()),
                 codigo=inv_data["codigo"],
                 nombres=inv_data["nombres"],
-                max_personas=inv_data["max_personas"],
-                cantidad_personas=inv_data["max_personas"],
                 max_adultos=inv_data["max_adultos"],
                 max_ninos=inv_data["max_ninos"],
                 cantidad_adultos=inv_data["max_adultos"],

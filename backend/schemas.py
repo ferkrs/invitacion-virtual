@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, computed_field
 from typing import Optional
 from datetime import datetime
 from models import EstadoInvitado
@@ -36,8 +36,13 @@ class InvitadoResponse(InvitadoBase):
     updated_at: datetime
     
     # Campos calculados (se calculan automáticamente desde adultos y niños)
-    max_personas: int
-    cantidad_personas: int
+    @computed_field
+    def max_personas(self) -> int:
+        return self.max_adultos + self.max_ninos
+    
+    @computed_field
+    def cantidad_personas(self) -> int:
+        return self.cantidad_adultos + self.cantidad_ninos
     
     class Config:
         from_attributes = True

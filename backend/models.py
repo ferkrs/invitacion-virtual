@@ -18,13 +18,22 @@ class Invitado(Base):
     uuid = Column(String(36), unique=True, index=True, default=lambda: str(uuid.uuid4()))
     codigo = Column(String(50), unique=True, index=True)  # Código legible para mostrar
     nombres = Column(String(255), nullable=False)
-    cantidad_personas = Column(Integer, default=0)
-    max_personas = Column(Integer, nullable=False)
     max_adultos = Column(Integer, nullable=False, default=0)
     max_ninos = Column(Integer, nullable=False, default=0)
     cantidad_adultos = Column(Integer, default=0)
     cantidad_ninos = Column(Integer, default=0)
     estado = Column(SQLEnum(EstadoInvitado), default=EstadoInvitado.PENDIENTE)
+    
+    # Propiedades calculadas (no se almacenan en BD, solo se calculan)
+    @property
+    def max_personas(self) -> int:
+        """Calcula el máximo de personas desde adultos y niños"""
+        return (self.max_adultos or 0) + (self.max_ninos or 0)
+    
+    @property
+    def cantidad_personas(self) -> int:
+        """Calcula la cantidad de personas desde adultos y niños"""
+        return (self.cantidad_adultos or 0) + (self.cantidad_ninos or 0)
     confirmacion = Column(Text, nullable=True)
     fecha_confirmacion = Column(DateTime, nullable=True)
     created_at = Column(DateTime, server_default=func.now())
