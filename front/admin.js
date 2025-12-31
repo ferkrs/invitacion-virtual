@@ -444,7 +444,7 @@ async function copiarLink(uuid) {
     const url = `${window.location.origin}/?uuid=${uuid}`;
     
     // Crear el mensaje personalizado
-    const mensaje = `Hola ✨ ${nombreInvitado} Con gran alegría queremos compartir contigo la invitación a nuestra boda. Será un honor contar con tu presencia en este momento tan especial 🤍 ${url}`;
+    const mensaje = `Hola ✨ ${nombreInvitado}. Con gran alegría queremos compartir contigo la invitación a nuestra boda. Será un honor contar con tu presencia en este momento tan especial 🤍 ${url}`;
     
     try {
         await navigator.clipboard.writeText(mensaje);
