@@ -6,10 +6,16 @@ from database import SessionLocal, engine
 from models import Base, AdminUser, Invitado, EstadoInvitado
 from auth import get_password_hash
 from config import settings
+from sqlalchemy import inspect
 import uuid
 
-# Crear todas las tablas
+# Eliminar todas las tablas existentes y recrearlas con la estructura actualizada
+# Esto asegura que todas las columnas nuevas estén presentes
+print("🔄 Recreando tablas con la estructura actualizada...")
+Base.metadata.drop_all(bind=engine)
+print("✓ Tablas eliminadas")
 Base.metadata.create_all(bind=engine)
+print("✓ Tablas recreadas con todas las columnas (incluyendo adultos y niños)")
 
 db = SessionLocal()
 
@@ -34,17 +40,23 @@ try:
             {
                 "codigo": "FM2026-001",
                 "nombres": "Ronald Fuentes y Deisy Miranda",
-                "max_personas": 2
+                "max_personas": 2,
+                "max_adultos": 2,
+                "max_ninos": 0
             },
             {
                 "codigo": "FM2026-002",
                 "nombres": "Juan Pérez y María García",
-                "max_personas": 2
+                "max_personas": 3,
+                "max_adultos": 2,
+                "max_ninos": 1
             },
             {
                 "codigo": "FM2026-003",
                 "nombres": "Carlos Rodríguez",
-                "max_personas": 1
+                "max_personas": 1,
+                "max_adultos": 1,
+                "max_ninos": 0
             }
         ]
         
@@ -55,6 +67,10 @@ try:
                 nombres=inv_data["nombres"],
                 max_personas=inv_data["max_personas"],
                 cantidad_personas=inv_data["max_personas"],
+                max_adultos=inv_data["max_adultos"],
+                max_ninos=inv_data["max_ninos"],
+                cantidad_adultos=inv_data["max_adultos"],
+                cantidad_ninos=inv_data["max_ninos"],
                 estado=EstadoInvitado.PENDIENTE
             )
             db.add(invitado)

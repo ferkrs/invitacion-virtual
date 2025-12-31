@@ -8,6 +8,8 @@ from models import EstadoInvitado
 class InvitadoBase(BaseModel):
     nombres: str
     max_personas: int
+    max_adultos: Optional[int] = None
+    max_ninos: Optional[int] = None
     codigo: Optional[str] = None
 
 
@@ -18,6 +20,8 @@ class InvitadoCreate(InvitadoBase):
 class InvitadoUpdate(BaseModel):
     nombres: Optional[str] = None
     max_personas: Optional[int] = None
+    max_adultos: Optional[int] = None
+    max_ninos: Optional[int] = None
     estado: Optional[str] = None
 
 
@@ -26,6 +30,8 @@ class InvitadoResponse(InvitadoBase):
     uuid: str
     codigo: str
     cantidad_personas: int
+    cantidad_adultos: int
+    cantidad_ninos: int
     estado: str
     confirmacion: Optional[str] = None
     fecha_confirmacion: Optional[datetime] = None
@@ -38,6 +44,8 @@ class InvitadoResponse(InvitadoBase):
 
 class InvitadoRSVP(BaseModel):
     confirmacion: str  # "si" o "no"
+    cantidad_adultos: Optional[int] = None
+    cantidad_ninos: Optional[int] = None
 
 
 # Schemas para Evento

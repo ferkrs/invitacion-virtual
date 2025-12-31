@@ -279,8 +279,30 @@ function mostrarNombreInvitado() {
     const textoSobre = document.getElementById('textoSobre');
 
     nombreTexto.textContent = invitadoActual.nombres;
-    const maxPersonas = invitadoActual.max_personas || invitadoActual.maxPersonas;
-    cantidadTexto.textContent = `-${maxPersonas} ${maxPersonas === 1 ? 'Persona' : 'Personas'}-`;
+    const maxAdultos = invitadoActual.max_adultos || invitadoActual.max_personas || 0;
+    const maxNinos = invitadoActual.max_ninos || 0;
+    
+    // Mostrar adultos
+    const cantidadAdultosTexto = document.getElementById('cantidadAdultosTexto');
+    if (cantidadAdultosTexto) {
+        if (maxAdultos > 0) {
+            cantidadAdultosTexto.textContent = `-${maxAdultos} ${maxAdultos === 1 ? 'Adulto' : 'Adultos'}-`;
+            cantidadAdultosTexto.style.display = 'block';
+        } else {
+            cantidadAdultosTexto.style.display = 'none';
+        }
+    }
+    
+    // Mostrar niños
+    const cantidadNinosTexto = document.getElementById('cantidadNinosTexto');
+    if (cantidadNinosTexto) {
+        if (maxNinos > 0) {
+            cantidadNinosTexto.textContent = `-${maxNinos} ${maxNinos === 1 ? 'Niño' : 'Niños'}-`;
+            cantidadNinosTexto.style.display = 'block';
+        } else {
+            cantidadNinosTexto.style.display = 'none';
+        }
+    }
 
     nombreDiv.classList.remove('d-none');
     nombreDiv.classList.add('fade-in');
@@ -382,8 +404,27 @@ function cargarDatosInvitacion() {
 function actualizarModalRSVP() {
     if (!invitadoActual) return;
 
-    const maxPersonas = invitadoActual.max_personas || invitadoActual.maxPersonas;
-    document.getElementById('maxPersonasModal').textContent = `-${maxPersonas} ${maxPersonas === 1 ? 'Adulto' : 'Adultos'}-`;
+    const maxAdultos = invitadoActual.max_adultos || invitadoActual.max_personas || 0;
+    const maxNinos = invitadoActual.max_ninos || 0;
+    const maxPersonas = maxAdultos + maxNinos;
+    
+    // Actualizar texto de adultos y niños
+    const maxAdultosModal = document.getElementById('maxAdultosModal');
+    const maxNinosModal = document.getElementById('maxNinosModal');
+    
+    if (maxAdultosModal) {
+        maxAdultosModal.textContent = `-${maxAdultos} ${maxAdultos === 1 ? 'Adulto' : 'Adultos'}-`;
+    }
+    
+    if (maxNinosModal) {
+        if (maxNinos > 0) {
+            maxNinosModal.textContent = `-${maxNinos} ${maxNinos === 1 ? 'Niño' : 'Niños'}-`;
+            maxNinosModal.style.display = 'block';
+        } else {
+            maxNinosModal.style.display = 'none';
+        }
+    }
+    
     document.getElementById('nombresInvitadosModal').textContent = invitadoActual.nombres;
     document.getElementById('cantidadInvitadosModal').textContent = maxPersonas;
     
@@ -416,6 +457,20 @@ async function enviarRSVP(confirmacion) {
     if (!invitadoActual || !uuidInvitado) return;
 
     try {
+        const maxAdultos = invitadoActual.max_adultos || invitadoActual.max_personas || 0;
+        const maxNinos = invitadoActual.max_ninos || 0;
+        
+        // Preparar datos del RSVP
+        const rsvpData = {
+            confirmacion: confirmacion
+        };
+        
+        // Si confirma, incluir adultos y niños
+        if (confirmacion === 'si') {
+            rsvpData.cantidad_adultos = maxAdultos;
+            rsvpData.cantidad_ninos = maxNinos;
+        }
+        
         // Enviar RSVP a la API
         const response = await fetch(
             `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.RSVP}/${uuidInvitado}/rsvp`,
@@ -424,7 +479,7 @@ async function enviarRSVP(confirmacion) {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ confirmacion: confirmacion })
+                body: JSON.stringify(rsvpData)
             }
         );
 

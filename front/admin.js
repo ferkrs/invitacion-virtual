@@ -223,14 +223,16 @@ async function agregarInvitado(e) {
     e.preventDefault();
 
     const nombres = document.getElementById('nombresNuevo').value.trim();
-    const maxPersonas = parseInt(document.getElementById('maxPersonasNuevo').value);
+    const maxAdultos = parseInt(document.getElementById('maxAdultosNuevo').value) || 0;
+    const maxNinos = parseInt(document.getElementById('maxNinosNuevo').value) || 0;
     const codigo = document.getElementById('codigoNuevo').value.trim().toUpperCase();
+    const maxPersonas = maxAdultos + maxNinos;
 
-    if (!nombres || !maxPersonas) {
+    if (!nombres || maxPersonas === 0) {
         Swal.fire({
             icon: 'warning',
             title: 'Campos requeridos',
-            text: 'Por favor completa todos los campos',
+            text: 'Por favor completa todos los campos. Debe haber al menos 1 adulto o niño.',
             confirmButtonText: 'Entendido',
             confirmButtonColor: '#d4a574'
         });
@@ -246,6 +248,8 @@ async function agregarInvitado(e) {
                 body: JSON.stringify({
                     nombres: nombres,
                     max_personas: maxPersonas,
+                    max_adultos: maxAdultos,
+                    max_ninos: maxNinos,
                     codigo: codigo || null
                 })
             }
@@ -298,8 +302,21 @@ async function editarInvitado(e) {
 
     const invitadoId = parseInt(document.getElementById('invitadoIdEditar').value);
     const nombres = document.getElementById('nombresEditar').value.trim();
-    const maxPersonas = parseInt(document.getElementById('maxPersonasEditar').value);
+    const maxAdultos = parseInt(document.getElementById('maxAdultosEditar').value) || 0;
+    const maxNinos = parseInt(document.getElementById('maxNinosEditar').value) || 0;
     const estado = document.getElementById('estadoEditar').value;
+    const maxPersonas = maxAdultos + maxNinos;
+
+    if (maxPersonas === 0) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Campos requeridos',
+            text: 'Debe haber al menos 1 adulto o niño.',
+            confirmButtonText: 'Entendido',
+            confirmButtonColor: '#d4a574'
+        });
+        return;
+    }
 
     try {
         const response = await fetch(
@@ -310,6 +327,8 @@ async function editarInvitado(e) {
                 body: JSON.stringify({
                     nombres: nombres,
                     max_personas: maxPersonas,
+                    max_adultos: maxAdultos,
+                    max_ninos: maxNinos,
                     estado: estado
                 })
             }
@@ -411,7 +430,8 @@ function abrirModalEditar(invitadoId) {
     if (invitado) {
         document.getElementById('invitadoIdEditar').value = invitado.id;
         document.getElementById('nombresEditar').value = invitado.nombres;
-        document.getElementById('maxPersonasEditar').value = invitado.max_personas;
+        document.getElementById('maxAdultosEditar').value = invitado.max_adultos || invitado.max_personas || 0;
+        document.getElementById('maxNinosEditar').value = invitado.max_ninos || 0;
         document.getElementById('estadoEditar').value = invitado.estado;
         
         const modal = new bootstrap.Modal(document.getElementById('modalEditarInvitado'));
@@ -479,10 +499,14 @@ function renderizarTabla() {
 
         const estadoBadge = getEstadoBadge(invitado.estado);
 
+        const adultosTexto = invitado.max_adultos ? `${invitado.max_adultos} adulto${invitado.max_adultos > 1 ? 's' : ''}` : '';
+        const ninosTexto = invitado.max_ninos ? `${invitado.max_ninos} niño${invitado.max_ninos > 1 ? 's' : ''}` : '';
+        const personasTexto = [adultosTexto, ninosTexto].filter(t => t).join(', ') || `${invitado.max_personas} persona${invitado.max_personas > 1 ? 's' : ''}`;
+        
         tr.innerHTML = `
             <td><strong>${invitado.codigo}</strong></td>
             <td>${invitado.nombres}</td>
-            <td>${invitado.max_personas}</td>
+            <td>${personasTexto}</td>
             <td>${estadoBadge}</td>
             <td>${invitado.confirmacion || '-'}</td>
             <td>

@@ -28,7 +28,10 @@
                 
                 <div id="nombreInvitado" class="mb-4 d-none">
                     <p class="mb-2" id="nombreInvitadoTexto"></p>
-                    <p class="fw-bold" id="cantidadInvitadoTexto">-No Personas-</p>
+                    <div id="cantidadInvitadoTexto" class="fw-bold">
+                        <p class="mb-1" id="cantidadAdultosTexto">-0 Adultos-</p>
+                        <p class="mb-0" id="cantidadNinosTexto" style="display: none;">-0 Niños-</p>
+                    </div>
                 </div>
                 
                 <p class="small mb-4" id="textoSobre">Para abrir la invitación haz click en el sobre:</p>
@@ -245,18 +248,21 @@
                 <div class="modal-body text-center">
                     <h3 class="script-font-large modal-title-script mb-4">Fernando y Melissa</h3>
                     <p class="modal-subtext mb-3">
-                        Al confirmar, respetar el número máximo de invitados asignados de:
+                        Al confirmar, respetar el número máximo de invitados asignados:
                     </p>
-                    <p class="text-center fw-bold mb-4 modal-pill" id="maxPersonasModal">-2 Adultos-</p>
+                    <div class="mb-4">
+                        <p class="text-center fw-bold mb-2 modal-pill" id="maxAdultosModal">-0 Adultos-</p>
+                        <p class="text-center fw-bold mb-0 modal-pill" id="maxNinosModal">-0 Niños-</p>
+                    </div>
                     
                     <div class="mb-3">
                         <p class="modal-label mb-1">Nombre de los invitados:</p>
                         <p class="modal-value" id="nombresInvitadosModal">Ronald Fuentes y Deisy Miranda</p>
                     </div>
                     
-                    <div class="mb-3">
+                    <div class="mb-3" id="cantidadInvitadosContainer">
                         <p class="modal-label mb-1">Cantidad de invitados:</p>
-                        <p class="modal-value" id="cantidadInvitadosModal">2</p>
+                        <p class="modal-value" id="cantidadInvitadosModal">0</p>
                     </div>
                     
                     <div id="rsvpButtons" class="d-grid gap-3">
