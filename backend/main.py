@@ -65,7 +65,12 @@ app.add_middleware(
 @app.get("/", response_class=HTMLResponse)
 async def serve_index(request: Request):
     """Sirve la página principal de la invitación"""
-    return templates.TemplateResponse("index.html", {"request": request})
+    # Obtener la URL base para los meta tags
+    base_url = str(request.base_url).rstrip('/')
+    return templates.TemplateResponse("index.html", {
+        "request": request,
+        "base_url": base_url
+    })
 
 
 @app.get("/admin", response_class=HTMLResponse)
