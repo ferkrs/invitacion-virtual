@@ -226,9 +226,8 @@ async function agregarInvitado(e) {
     const maxAdultos = parseInt(document.getElementById('maxAdultosNuevo').value) || 0;
     const maxNinos = parseInt(document.getElementById('maxNinosNuevo').value) || 0;
     const codigo = document.getElementById('codigoNuevo').value.trim().toUpperCase();
-    const maxPersonas = maxAdultos + maxNinos;
 
-    if (!nombres || maxPersonas === 0) {
+    if (!nombres || (maxAdultos === 0 && maxNinos === 0)) {
         Swal.fire({
             icon: 'warning',
             title: 'Campos requeridos',
@@ -247,7 +246,6 @@ async function agregarInvitado(e) {
                 headers: getAuthHeaders(),
                 body: JSON.stringify({
                     nombres: nombres,
-                    max_personas: maxPersonas,
                     max_adultos: maxAdultos,
                     max_ninos: maxNinos,
                     codigo: codigo || null
@@ -305,9 +303,8 @@ async function editarInvitado(e) {
     const maxAdultos = parseInt(document.getElementById('maxAdultosEditar').value) || 0;
     const maxNinos = parseInt(document.getElementById('maxNinosEditar').value) || 0;
     const estado = document.getElementById('estadoEditar').value;
-    const maxPersonas = maxAdultos + maxNinos;
 
-    if (maxPersonas === 0) {
+    if (maxAdultos === 0 && maxNinos === 0) {
         Swal.fire({
             icon: 'warning',
             title: 'Campos requeridos',
@@ -326,7 +323,6 @@ async function editarInvitado(e) {
                 headers: getAuthHeaders(),
                 body: JSON.stringify({
                     nombres: nombres,
-                    max_personas: maxPersonas,
                     max_adultos: maxAdultos,
                     max_ninos: maxNinos,
                     estado: estado
@@ -441,15 +437,22 @@ function abrirModalEditar(invitadoId) {
 
 // Copiar link al portapapeles
 async function copiarLink(uuid) {
+    // Buscar el invitado por UUID para obtener su nombre
+    const invitado = invitados.find(inv => inv.uuid === uuid);
+    const nombreInvitado = invitado ? invitado.nombres : 'Invitado';
+    
     const url = `${window.location.origin}/?uuid=${uuid}`;
     
+    // Crear el mensaje personalizado
+    const mensaje = `Hola ✨ ${nombreInvitado} Con gran alegría queremos compartir contigo la invitación a nuestra boda. Será un honor contar con tu presencia en este momento tan especial 🤍 ${url}`;
+    
     try {
-        await navigator.clipboard.writeText(url);
+        await navigator.clipboard.writeText(mensaje);
         
         Swal.fire({
             icon: 'success',
             title: '¡Link copiado!',
-            text: 'El link ha sido copiado al portapapeles',
+            text: 'El link y mensaje han sido copiados al portapapeles',
             confirmButtonText: 'Perfecto',
             confirmButtonColor: '#d4a574',
             timer: 2000,
@@ -458,7 +461,7 @@ async function copiarLink(uuid) {
     } catch (error) {
         // Fallback para navegadores antiguos
         const textArea = document.createElement('textarea');
-        textArea.value = url;
+        textArea.value = mensaje;
         document.body.appendChild(textArea);
         textArea.select();
         document.execCommand('copy');
@@ -467,7 +470,7 @@ async function copiarLink(uuid) {
         Swal.fire({
             icon: 'success',
             title: '¡Link copiado!',
-            text: 'El link ha sido copiado al portapapeles',
+            text: 'El link y mensaje han sido copiados al portapapeles',
             confirmButtonText: 'Perfecto',
             confirmButtonColor: '#d4a574',
             timer: 2000,

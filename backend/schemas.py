@@ -7,9 +7,8 @@ from models import EstadoInvitado
 # Schemas para Invitados
 class InvitadoBase(BaseModel):
     nombres: str
-    max_personas: int
-    max_adultos: Optional[int] = None
-    max_ninos: Optional[int] = None
+    max_adultos: int
+    max_ninos: int = 0
     codigo: Optional[str] = None
 
 
@@ -19,7 +18,6 @@ class InvitadoCreate(InvitadoBase):
 
 class InvitadoUpdate(BaseModel):
     nombres: Optional[str] = None
-    max_personas: Optional[int] = None
     max_adultos: Optional[int] = None
     max_ninos: Optional[int] = None
     estado: Optional[str] = None
@@ -29,7 +27,6 @@ class InvitadoResponse(InvitadoBase):
     id: int
     uuid: str
     codigo: str
-    cantidad_personas: int
     cantidad_adultos: int
     cantidad_ninos: int
     estado: str
@@ -37,6 +34,10 @@ class InvitadoResponse(InvitadoBase):
     fecha_confirmacion: Optional[datetime] = None
     created_at: datetime
     updated_at: datetime
+    
+    # Campos calculados (se calculan automáticamente desde adultos y niños)
+    max_personas: int
+    cantidad_personas: int
     
     class Config:
         from_attributes = True

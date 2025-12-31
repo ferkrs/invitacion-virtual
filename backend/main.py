@@ -175,6 +175,7 @@ async def confirmar_rsvp(
         else:
             invitado.cantidad_ninos = invitado.max_ninos
         
+        # Calcular cantidad_personas automáticamente
         invitado.cantidad_personas = invitado.cantidad_adultos + invitado.cantidad_ninos
     else:
         invitado.estado = EstadoInvitado.RECHAZADO
@@ -227,16 +228,17 @@ async def crear_invitado(
             raise HTTPException(status_code=400, detail="El código ya existe")
         codigo = invitado.codigo
     
-    # Calcular adultos y niños si no se proporcionan
-    max_adultos = invitado.max_adultos if invitado.max_adultos is not None else invitado.max_personas
-    max_ninos = invitado.max_ninos if invitado.max_ninos is not None else 0
+    # Calcular max_personas automáticamente desde adultos y niños
+    max_adultos = invitado.max_adultos
+    max_ninos = invitado.max_ninos or 0
+    max_personas = max_adultos + max_ninos
     
     nuevo_invitado = Invitado(
         uuid=str(uuid.uuid4()),
         codigo=codigo,
         nombres=invitado.nombres,
-        max_personas=invitado.max_personas,
-        cantidad_personas=invitado.max_personas,
+        max_personas=max_personas,  # Calculado automáticamente
+        cantidad_personas=max_personas,  # Calculado automáticamente
         max_adultos=max_adultos,
         max_ninos=max_ninos,
         cantidad_adultos=max_adultos,
@@ -265,12 +267,8 @@ async def actualizar_invitado(
     
     if invitado.nombres is not None:
         db_invitado.nombres = invitado.nombres
-    if invitado.max_personas is not None:
-        db_invitado.max_personas = invitado.max_personas
-        if db_invitado.estado == EstadoInvitado.PENDIENTE:
-            db_invitado.cantidad_personas = invitado.max_personas
     
-    # Actualizar adultos y niños
+    # Actualizar adultos y niños (max_personas se calcula automáticamente)
     if invitado.max_adultos is not None:
         db_invitado.max_adultos = invitado.max_adultos
         if db_invitado.estado == EstadoInvitado.PENDIENTE:
@@ -281,11 +279,13 @@ async def actualizar_invitado(
         if db_invitado.estado == EstadoInvitado.PENDIENTE:
             db_invitado.cantidad_ninos = invitado.max_ninos
     
-    # Recalcular max_personas si se actualizan adultos y niños
+    # Recalcular max_personas y cantidad_personas automáticamente
     if invitado.max_adultos is not None or invitado.max_ninos is not None:
+        db_invitado.max_personas = db_invitado.max_adultos + db_invitado.max_ninos
         if db_invitado.estado == EstadoInvitado.PENDIENTE:
-            db_invitado.max_personas = db_invitado.max_adultos + db_invitado.max_ninos
             db_invitado.cantidad_personas = db_invitado.max_personas
+            db_invitado.cantidad_adultos = db_invitado.max_adultos
+            db_invitado.cantidad_ninos = db_invitado.max_ninos
     if invitado.max_adultos is not None:
         db_invitado.max_adultos = invitado.max_adultos
         if db_invitado.estado == EstadoInvitado.PENDIENTE:
@@ -305,16 +305,16 @@ async def actualizar_invitado(
             if nuevo_estado == EstadoInvitado.PENDIENTE:
                 db_invitado.confirmacion = None
                 db_invitado.fecha_confirmacion = None
-                db_invitado.cantidad_personas = db_invitado.max_personas
                 db_invitado.cantidad_adultos = db_invitado.max_adultos
                 db_invitado.cantidad_ninos = db_invitado.max_ninos
+                db_invitado.cantidad_personas = db_invitado.cantidad_adultos + db_invitado.cantidad_ninos
             # Si se cambia a confirmado, establecer valores por defecto
             elif nuevo_estado == EstadoInvitado.CONFIRMADO:
                 if not db_invitado.confirmacion:
                     db_invitado.confirmacion = "Si, asistiremos."
-                db_invitado.cantidad_personas = db_invitado.max_personas
                 db_invitado.cantidad_adultos = db_invitado.max_adultos
                 db_invitado.cantidad_ninos = db_invitado.max_ninos
+                db_invitado.cantidad_personas = db_invitado.cantidad_adultos + db_invitado.cantidad_ninos
                 if not db_invitado.fecha_confirmacion:
                     db_invitado.fecha_confirmacion = datetime.utcnow()
             # Si se cambia a rechazado
