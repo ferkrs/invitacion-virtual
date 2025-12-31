@@ -269,8 +269,11 @@ async function agregarInvitado(e) {
         // Limpiar formulario
         document.getElementById('formAgregarInvitado').reset();
 
-        // Recargar datos primero para actualizar la tabla
+        // Recargar datos para actualizar la tabla
         await cargarDatos();
+        
+        // Esperar un momento para que DataTables se renderice
+        await new Promise(resolve => setTimeout(resolve, 100));
 
         // Mostrar éxito después de actualizar
         Swal.fire({
@@ -340,8 +343,11 @@ async function editarInvitado(e) {
             modal.hide();
         }
 
-        // Recargar datos primero para actualizar la tabla
+        // Recargar datos para actualizar la tabla
         await cargarDatos();
+        
+        // Esperar un momento para que DataTables se renderice
+        await new Promise(resolve => setTimeout(resolve, 100));
 
         // Mostrar mensaje de éxito después de actualizar
         Swal.fire({
@@ -393,8 +399,11 @@ async function eliminarInvitado(invitadoId) {
                 throw new Error(error.detail || 'Error al eliminar invitado');
             }
 
-            // Recargar datos primero para actualizar la tabla
+            // Recargar datos para actualizar la tabla
             await cargarDatos();
+            
+            // Esperar un momento para que DataTables se renderice
+            await new Promise(resolve => setTimeout(resolve, 100));
 
             // Mostrar éxito después de actualizar
             Swal.fire({
@@ -481,6 +490,8 @@ async function copiarLink(uuid) {
 
 // Renderizar tabla
 function renderizarTabla() {
+    console.log('Renderizando tabla con', invitados?.length || 0, 'invitados');
+    
     const tbody = document.getElementById('tablaInvitados');
     if (!tbody) {
         console.error('No se encontró el elemento tablaInvitados');
@@ -492,8 +503,36 @@ function renderizarTabla() {
         return;
     }
 
-    // Limpiar el contenido actual
+    // Inicializar o actualizar DataTables
+    const tabla = jQuery('#tablaInvitadosDT');
+    
+    if (!tabla.length) {
+        console.warn('No se encontró la tabla con ID tablaInvitadosDT');
+        return;
+    }
+
+    // Verificar que jQuery y DataTables estén disponibles
+    if (typeof jQuery === 'undefined' || !jQuery.fn.DataTable) {
+        console.warn('DataTables no está disponible. Asegúrate de que jQuery y DataTables estén cargados.');
+        return;
+    }
+
+    // Verificar si DataTables ya está inicializado y destruirlo primero
+    if (jQuery.fn.DataTable.isDataTable('#tablaInvitadosDT')) {
+        try {
+            console.log('Destruyendo DataTables existente...');
+            const dtInstance = tabla.DataTable();
+            dtInstance.destroy(); // Sin true para mantener el DOM
+            dataTable = null;
+            console.log('DataTables destruido correctamente');
+        } catch (error) {
+            console.error('Error al destruir DataTables:', error);
+        }
+    }
+
+    // Limpiar el contenido actual del tbody
     tbody.innerHTML = '';
+    console.log('tbody limpiado');
 
     // Renderizar cada invitado
     invitados.forEach(invitado => {
@@ -529,70 +568,50 @@ function renderizarTabla() {
 
         tbody.appendChild(tr);
     });
-
-    // Inicializar o actualizar DataTables
-    const tabla = jQuery('#tablaInvitadosDT');
     
-    if (!tabla.length) {
-        console.warn('No se encontró la tabla con ID tablaInvitadosDT');
-        return;
-    }
-
-    // Verificar si DataTables ya está inicializado y destruirlo
-    if (jQuery.fn.DataTable.isDataTable('#tablaInvitadosDT')) {
-        try {
-            tabla.DataTable().destroy();
-            dataTable = null;
-        } catch (error) {
-            console.error('Error al destruir DataTables:', error);
-        }
-    }
-
-    // Verificar que jQuery y DataTables estén disponibles
-    if (typeof jQuery !== 'undefined' && jQuery.fn.DataTable) {
-        // Inicializar DataTables inmediatamente (sin delay)
-        try {
-            dataTable = tabla.DataTable({
-                language: {
-                    url: 'https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json',
-                    search: 'Buscar:',
-                    lengthMenu: 'Mostrar _MENU_ registros',
-                    info: 'Mostrando _START_ a _END_ de _TOTAL_ invitados',
-                    infoEmpty: 'Mostrando 0 a 0 de 0 invitados',
-                    infoFiltered: '(filtrado de _MAX_ invitados totales)',
-                    paginate: {
-                        first: 'Primero',
-                        last: 'Último',
-                        next: 'Siguiente',
-                        previous: 'Anterior'
-                    },
-                    emptyTable: 'No hay invitados registrados',
-                    zeroRecords: 'No se encontraron invitados que coincidan con la búsqueda'
+    console.log('Filas agregadas al tbody:', tbody.children.length);
+    
+    // Inicializar DataTables con los nuevos datos
+    try {
+        console.log('Inicializando DataTables...');
+        dataTable = tabla.DataTable({
+            language: {
+                url: 'https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json',
+                search: 'Buscar:',
+                lengthMenu: 'Mostrar _MENU_ registros',
+                info: 'Mostrando _START_ a _END_ de _TOTAL_ invitados',
+                infoEmpty: 'Mostrando 0 a 0 de 0 invitados',
+                infoFiltered: '(filtrado de _MAX_ invitados totales)',
+                paginate: {
+                    first: 'Primero',
+                    last: 'Último',
+                    next: 'Siguiente',
+                    previous: 'Anterior'
                 },
-                pageLength: 10,
-                lengthMenu: [[10, 25, 50, -1], [10, 25, 50, 'Todos']],
-                order: [[0, 'asc']], // Ordenar por código por defecto
-                responsive: true,
-                columnDefs: [
-                    { orderable: true, targets: [0, 1, 2, 3] }, // Código, Nombre, Personas, Estado son ordenables
-                    { orderable: false, targets: [4, 5, 6] } // Confirmación, Link, Acciones no son ordenables
-                ],
-                drawCallback: function() {
-                    // Asegurar que los eventos onclick funcionen después de cada redibujado
-                    jQuery('.link-copy').off('click').on('click', function() {
-                        const uuid = jQuery(this).data('uuid');
-                        if (uuid) {
-                            copiarLink(uuid);
-                        }
-                    });
-                }
-            });
-            console.log('DataTables inicializado correctamente');
-        } catch (error) {
-            console.error('Error al inicializar DataTables:', error);
-        }
-    } else {
-        console.warn('DataTables no está disponible. Asegúrate de que jQuery y DataTables estén cargados.');
+                emptyTable: 'No hay invitados registrados',
+                zeroRecords: 'No se encontraron invitados que coincidan con la búsqueda'
+            },
+            pageLength: 10,
+            lengthMenu: [[10, 25, 50, -1], [10, 25, 50, 'Todos']],
+            order: [[0, 'asc']], // Ordenar por código por defecto
+            responsive: true,
+            columnDefs: [
+                { orderable: true, targets: [0, 1, 2, 3] }, // Código, Nombre, Personas, Estado son ordenables
+                { orderable: false, targets: [4, 5, 6] } // Confirmación, Link, Acciones no son ordenables
+            ],
+            drawCallback: function() {
+                // Asegurar que los eventos onclick funcionen después de cada redibujado
+                jQuery('.link-copy').off('click').on('click', function() {
+                    const uuid = jQuery(this).data('uuid');
+                    if (uuid) {
+                        copiarLink(uuid);
+                    }
+                });
+            }
+        });
+        console.log('DataTables inicializado correctamente con', dataTable.rows().count(), 'filas');
+    } catch (error) {
+        console.error('Error al inicializar DataTables:', error);
     }
 }
 
