@@ -248,6 +248,32 @@ async def actualizar_invitado(
         if db_invitado.estado == EstadoInvitado.PENDIENTE:
             db_invitado.cantidad_personas = invitado.max_personas
     
+    # Permitir cambiar el estado
+    if invitado.estado is not None:
+        try:
+            nuevo_estado = EstadoInvitado(invitado.estado)
+            db_invitado.estado = nuevo_estado
+            
+            # Si se cambia a pendiente, resetear confirmación y cantidad
+            if nuevo_estado == EstadoInvitado.PENDIENTE:
+                db_invitado.confirmacion = None
+                db_invitado.fecha_confirmacion = None
+                db_invitado.cantidad_personas = db_invitado.max_personas
+            # Si se cambia a confirmado, establecer valores por defecto
+            elif nuevo_estado == EstadoInvitado.CONFIRMADO:
+                if not db_invitado.confirmacion:
+                    db_invitado.confirmacion = "Si, asistiremos."
+                db_invitado.cantidad_personas = db_invitado.max_personas
+                if not db_invitado.fecha_confirmacion:
+                    db_invitado.fecha_confirmacion = datetime.utcnow()
+            # Si se cambia a rechazado
+            elif nuevo_estado == EstadoInvitado.RECHAZADO:
+                if not db_invitado.confirmacion:
+                    db_invitado.confirmacion = "No podremos asistir"
+                db_invitado.cantidad_personas = 0
+        except ValueError:
+            raise HTTPException(status_code=400, detail="Estado inválido")
+    
     db.commit()
     db.refresh(db_invitado)
     

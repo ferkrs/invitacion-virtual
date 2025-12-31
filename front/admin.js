@@ -1,6 +1,7 @@
 // Variables globales
 let token = null;
 let invitados = [];
+let dataTable = null; // Instancia de DataTables
 
 // Verificar si hay token guardado
 function verificarAutenticacion() {
@@ -266,7 +267,10 @@ async function agregarInvitado(e) {
         // Limpiar formulario
         document.getElementById('formAgregarInvitado').reset();
 
-        // Mostrar éxito
+        // Recargar datos primero para actualizar la tabla
+        await cargarDatos();
+
+        // Mostrar éxito después de actualizar
         Swal.fire({
             icon: 'success',
             title: '¡Invitado agregado!',
@@ -276,9 +280,6 @@ async function agregarInvitado(e) {
             timer: 2000,
             timerProgressBar: true
         });
-
-        // Recargar datos
-        await cargarDatos();
     } catch (error) {
         console.error('Error al agregar invitado:', error);
         Swal.fire({
@@ -298,6 +299,7 @@ async function editarInvitado(e) {
     const invitadoId = parseInt(document.getElementById('invitadoIdEditar').value);
     const nombres = document.getElementById('nombresEditar').value.trim();
     const maxPersonas = parseInt(document.getElementById('maxPersonasEditar').value);
+    const estado = document.getElementById('estadoEditar').value;
 
     try {
         const response = await fetch(
@@ -307,7 +309,8 @@ async function editarInvitado(e) {
                 headers: getAuthHeaders(),
                 body: JSON.stringify({
                     nombres: nombres,
-                    max_personas: maxPersonas
+                    max_personas: maxPersonas,
+                    estado: estado
                 })
             }
         );
@@ -322,6 +325,10 @@ async function editarInvitado(e) {
             modal.hide();
         }
 
+        // Recargar datos primero para actualizar la tabla
+        await cargarDatos();
+
+        // Mostrar mensaje de éxito después de actualizar
         Swal.fire({
             icon: 'success',
             title: '¡Cambios guardados!',
@@ -331,8 +338,6 @@ async function editarInvitado(e) {
             timer: 2000,
             timerProgressBar: true
         });
-
-        await cargarDatos();
     } catch (error) {
         console.error('Error al editar invitado:', error);
         Swal.fire({
@@ -373,6 +378,10 @@ async function eliminarInvitado(invitadoId) {
                 throw new Error(error.detail || 'Error al eliminar invitado');
             }
 
+            // Recargar datos primero para actualizar la tabla
+            await cargarDatos();
+
+            // Mostrar éxito después de actualizar
             Swal.fire({
                 icon: 'success',
                 title: '¡Eliminado!',
@@ -382,8 +391,6 @@ async function eliminarInvitado(invitadoId) {
                 timer: 2000,
                 timerProgressBar: true
             });
-
-            await cargarDatos();
         } catch (error) {
             console.error('Error al eliminar invitado:', error);
             Swal.fire({
@@ -405,6 +412,7 @@ function abrirModalEditar(invitadoId) {
         document.getElementById('invitadoIdEditar').value = invitado.id;
         document.getElementById('nombresEditar').value = invitado.nombres;
         document.getElementById('maxPersonasEditar').value = invitado.max_personas;
+        document.getElementById('estadoEditar').value = invitado.estado;
         
         const modal = new bootstrap.Modal(document.getElementById('modalEditarInvitado'));
         modal.show();
@@ -451,14 +459,20 @@ async function copiarLink(uuid) {
 // Renderizar tabla
 function renderizarTabla() {
     const tbody = document.getElementById('tablaInvitados');
-    if (!tbody) return;
-    tbody.innerHTML = '';
+    if (!tbody) {
+        console.error('No se encontró el elemento tablaInvitados');
+        return;
+    }
 
     if (!Array.isArray(invitados)) {
         console.error('La variable invitados no es un array:', invitados);
         return;
     }
 
+    // Limpiar el contenido actual
+    tbody.innerHTML = '';
+
+    // Renderizar cada invitado
     invitados.forEach(invitado => {
         const tr = document.createElement('tr');
         tr.className = 'invitado-row';
@@ -472,7 +486,7 @@ function renderizarTabla() {
             <td>${estadoBadge}</td>
             <td>${invitado.confirmacion || '-'}</td>
             <td>
-                <span class="link-copy" onclick="copiarLink('${invitado.uuid}')" title="Haz click para copiar">
+                <span class="link-copy" data-uuid="${invitado.uuid}" onclick="copiarLink('${invitado.uuid}')" title="Haz click para copiar">
                     <i class="bi bi-link-45deg"></i> Copiar Link
                 </span>
             </td>
@@ -488,6 +502,71 @@ function renderizarTabla() {
 
         tbody.appendChild(tr);
     });
+
+    // Inicializar o actualizar DataTables
+    const tabla = jQuery('#tablaInvitadosDT');
+    
+    if (!tabla.length) {
+        console.warn('No se encontró la tabla con ID tablaInvitadosDT');
+        return;
+    }
+
+    // Verificar si DataTables ya está inicializado y destruirlo
+    if (jQuery.fn.DataTable.isDataTable('#tablaInvitadosDT')) {
+        try {
+            tabla.DataTable().destroy();
+            dataTable = null;
+        } catch (error) {
+            console.error('Error al destruir DataTables:', error);
+        }
+    }
+
+    // Verificar que jQuery y DataTables estén disponibles
+    if (typeof jQuery !== 'undefined' && jQuery.fn.DataTable) {
+        // Inicializar DataTables inmediatamente (sin delay)
+        try {
+            dataTable = tabla.DataTable({
+                language: {
+                    url: 'https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json',
+                    search: 'Buscar:',
+                    lengthMenu: 'Mostrar _MENU_ registros',
+                    info: 'Mostrando _START_ a _END_ de _TOTAL_ invitados',
+                    infoEmpty: 'Mostrando 0 a 0 de 0 invitados',
+                    infoFiltered: '(filtrado de _MAX_ invitados totales)',
+                    paginate: {
+                        first: 'Primero',
+                        last: 'Último',
+                        next: 'Siguiente',
+                        previous: 'Anterior'
+                    },
+                    emptyTable: 'No hay invitados registrados',
+                    zeroRecords: 'No se encontraron invitados que coincidan con la búsqueda'
+                },
+                pageLength: 10,
+                lengthMenu: [[10, 25, 50, -1], [10, 25, 50, 'Todos']],
+                order: [[0, 'asc']], // Ordenar por código por defecto
+                responsive: true,
+                columnDefs: [
+                    { orderable: true, targets: [0, 1, 2, 3] }, // Código, Nombre, Personas, Estado son ordenables
+                    { orderable: false, targets: [4, 5, 6] } // Confirmación, Link, Acciones no son ordenables
+                ],
+                drawCallback: function() {
+                    // Asegurar que los eventos onclick funcionen después de cada redibujado
+                    jQuery('.link-copy').off('click').on('click', function() {
+                        const uuid = jQuery(this).data('uuid');
+                        if (uuid) {
+                            copiarLink(uuid);
+                        }
+                    });
+                }
+            });
+            console.log('DataTables inicializado correctamente');
+        } catch (error) {
+            console.error('Error al inicializar DataTables:', error);
+        }
+    } else {
+        console.warn('DataTables no está disponible. Asegúrate de que jQuery y DataTables estén cargados.');
+    }
 }
 
 // Obtener badge de estado
@@ -499,6 +578,79 @@ function getEstadoBadge(estado) {
             return '<span class="badge badge-estado badge-rechazado">Rechazado</span>';
         default:
             return '<span class="badge badge-estado badge-pendiente">Pendiente</span>';
+    }
+}
+
+// Cambiar estado de invitado
+async function cambiarEstado(invitadoId, estadoActual) {
+    // Determinar el siguiente estado o volver a pendiente
+    let nuevoEstado;
+    let mensaje;
+    
+    if (estadoActual === 'pendiente') {
+        nuevoEstado = 'pendiente'; // Ya está pendiente, pero permitimos resetear
+        mensaje = '¿Deseas mantener el estado como Pendiente? Esto reseteará cualquier confirmación previa.';
+    } else if (estadoActual === 'confirmado') {
+        nuevoEstado = 'pendiente';
+        mensaje = '¿Deseas cambiar el estado a Pendiente? Esto reseteará la confirmación y permitirá que el invitado confirme nuevamente.';
+    } else if (estadoActual === 'rechazado') {
+        nuevoEstado = 'pendiente';
+        mensaje = '¿Deseas cambiar el estado a Pendiente? Esto permitirá que el invitado confirme nuevamente.';
+    } else {
+        nuevoEstado = 'pendiente';
+        mensaje = '¿Deseas cambiar el estado a Pendiente?';
+    }
+    
+    const resultado = await Swal.fire({
+        icon: 'question',
+        title: 'Cambiar Estado',
+        text: mensaje,
+        showCancelButton: true,
+        confirmButtonText: 'Sí, cambiar',
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#000000',
+        cancelButtonColor: '#6c757d'
+    });
+    
+    if (resultado.isConfirmed) {
+        try {
+            const response = await fetch(
+                `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.ADMIN_INVITADOS}/${invitadoId}`,
+                {
+                    method: 'PUT',
+                    headers: getAuthHeaders(),
+                    body: JSON.stringify({
+                        estado: nuevoEstado
+                    })
+                }
+            );
+            
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.detail || 'Error al cambiar el estado');
+            }
+            
+            Swal.fire({
+                icon: 'success',
+                title: '¡Estado actualizado!',
+                text: `El estado ha sido cambiado a ${nuevoEstado === 'pendiente' ? 'Pendiente' : nuevoEstado}`,
+                confirmButtonText: 'Perfecto',
+                confirmButtonColor: '#d4a574',
+                timer: 2000,
+                timerProgressBar: true
+            });
+            
+            await cargarDatos();
+        } catch (error) {
+            console.error('Error al cambiar estado:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: error.message || 'No se pudo cambiar el estado',
+                confirmButtonText: 'Entendido',
+                confirmButtonColor: '#d4a574'
+            });
+        }
     }
 }
 

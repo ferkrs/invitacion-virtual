@@ -18,6 +18,7 @@ class InvitadoCreate(InvitadoBase):
 class InvitadoUpdate(BaseModel):
     nombres: Optional[str] = None
     max_personas: Optional[int] = None
+    estado: Optional[str] = None
 
 
 class InvitadoResponse(InvitadoBase):
