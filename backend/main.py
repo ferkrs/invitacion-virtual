@@ -361,11 +361,18 @@ async def obtener_estadisticas(
     pendientes = db.query(Invitado).filter(Invitado.estado == EstadoInvitado.PENDIENTE).count()
     rechazados = db.query(Invitado).filter(Invitado.estado == EstadoInvitado.RECHAZADO).count()
     
+    # Calcular total de adultos y niños confirmados
+    invitados_confirmados = db.query(Invitado).filter(Invitado.estado == EstadoInvitado.CONFIRMADO).all()
+    total_adultos_confirmados = sum(inv.cantidad_adultos or 0 for inv in invitados_confirmados)
+    total_ninos_confirmados = sum(inv.cantidad_ninos or 0 for inv in invitados_confirmados)
+    
     return {
         "total": total,
         "confirmados": confirmados,
         "pendientes": pendientes,
-        "rechazados": rechazados
+        "rechazados": rechazados,
+        "total_adultos_confirmados": total_adultos_confirmados,
+        "total_ninos_confirmados": total_ninos_confirmados
     }
 
 

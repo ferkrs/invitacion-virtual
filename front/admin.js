@@ -680,8 +680,33 @@ async function cambiarEstado(invitadoId, estadoActual) {
 
 // Actualizar estadísticas
 function actualizarEstadisticas(stats) {
-    document.getElementById('totalInvitados').textContent = stats.total || 0;
-    document.getElementById('confirmados').textContent = stats.confirmados || 0;
-    document.getElementById('pendientes').textContent = stats.pendientes || 0;
+    if (!stats) {
+        console.warn('No se recibieron estadísticas');
+        return;
+    }
+    
+    // Verificar que los elementos existan antes de actualizarlos
+    const confirmadosEl = document.getElementById('confirmados');
+    const totalAdultosEl = document.getElementById('totalAdultosConfirmados');
+    const totalNinosEl = document.getElementById('totalNinosConfirmados');
+    
+    if (confirmadosEl) {
+        confirmadosEl.textContent = stats.confirmados || 0;
+    } else {
+        console.warn('Elemento confirmados no encontrado');
+    }
+    
+    // Actualizar totales de adultos y niños confirmados
+    if (totalAdultosEl) {
+        totalAdultosEl.textContent = stats.total_adultos_confirmados || 0;
+    } else {
+        console.warn('Elemento totalAdultosConfirmados no encontrado');
+    }
+    
+    if (totalNinosEl) {
+        totalNinosEl.textContent = stats.total_ninos_confirmados || 0;
+    } else {
+        console.warn('Elemento totalNinosConfirmados no encontrado');
+    }
 }
 
